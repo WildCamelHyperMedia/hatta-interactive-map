@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <title>Explore Hatta — Interactive Map (prototype)</title>
+  <meta name="description" content="Interactive map of Hatta for web and kiosk — Wild Camel HyperMedia prototype for Dubai Culture.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="map.css">
+  <style>
+    /* Demo page shell only — the component itself is fully scoped under #hatta-map-widget */
+    html, body { margin: 0; height: 100%; background: #F4EADB; }
+    #hatta-map-widget { height: 100vh; height: 100dvh; }
+  </style>
+</head>
+<body>
+  <div id="hatta-map-widget" data-lang="en" dir="ltr"></div>
+
+  <!-- data/pois.js makes the prototype work from file:// (kiosk); map.js falls back to fetch(dataUrl) without it -->
+  <script src="data/pois.js"></script>
+  <script src="map.js"></script>
+  <script>
+    (function () {
+      // Demo switches via URL:  ?mode=kiosk|web  &orientation=auto|landscape|portrait  &lang=en|ar  &landing=0  &idle=60  &art=clean|print
+      var q = {};
+      window.location.search.replace(/^\?/, '').split('&').forEach(function (kv) {
+        if (!kv) return; var p = kv.split('='); q[decodeURIComponent(p[0])] = decodeURIComponent(p[1] || '');
+      });
+      window.HattaMap.init({
+        container: '#hatta-map-widget',
+        mode: q.mode === 'kiosk' ? 'kiosk' : 'web',
+        orientation: q.orientation || 'auto',
+        lang: q.lang || 'en',
+        showLangToggle: true,
+        showLanding: q.landing !== '0',
+        idleSeconds: q.idle ? parseInt(q.idle, 10) : 75,
+        dataUrl: 'data/pois.json',
+        artwork: q.art === 'print' ? 'print' : 'clean',
+        assetsBase: ''
+      });
+    })();
+  </script>
+</body>
+</html>

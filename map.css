@@ -1,0 +1,383 @@
+/* ==========================================================================
+   Hatta Interactive Map — prototype stylesheet
+   All rules are scoped under #hatta-map-widget (Liferay-friendly, no globals).
+   Sizing is em-based so the whole UI scales with the root font-size:
+     web 16px · kiosk 20px (set by .hm-kiosk).
+   Logical properties (inline-start / inline-end) make RTL automatic.
+   ========================================================================== */
+
+@font-face { font-family: "Dubai"; src: url("assets/fonts/Dubai-Light.woff") format("woff");   font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: "Dubai"; src: url("assets/fonts/Dubai-Regular.woff") format("woff"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Dubai"; src: url("assets/fonts/Dubai-Medium.woff") format("woff");  font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Dubai"; src: url("assets/fonts/Dubai-Bold.woff") format("woff");    font-weight: 700; font-style: normal; font-display: swap; }
+
+#hatta-map-widget {
+  /* ---- tokens ---- */
+  --hm-font: "Dubai", "Segoe UI", Tahoma, Arial, sans-serif;
+  --hm-sand: #F4EADB;
+  --hm-sand-2: #EADCC6;
+  --hm-paper: #FFFDF9;
+  --hm-ink: #2E2119;
+  --hm-ink-2: #6B5A4E;
+  --hm-line: rgba(70, 45, 25, 0.14);
+  --hm-accent: #B5552B;      /* Hatta orange */
+  --hm-accent-2: #8E3F1D;
+  --hm-teal: #1C6E8C;
+  --hm-gold: #D9A441;
+  --hm-shadow: 0 0.6em 1.6em rgba(50, 30, 10, 0.18);
+  --hm-shadow-sm: 0 0.2em 0.6em rgba(50, 30, 10, 0.16);
+  --hm-radius: 1.1em;
+  --hm-header-h: 4.2em;
+  --hm-footer-h: 3.6em;
+  --hm-panel-w: 27em;
+  --hm-ease: cubic-bezier(.2,.8,.2,1);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 480px;
+  overflow: hidden;
+  background: var(--hm-sand);
+  color: var(--hm-ink);
+  font-family: var(--hm-font);
+  font-size: 16px;
+  line-height: 1.35;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+#hatta-map-widget.hm-kiosk { font-size: 20px; user-select: none; -webkit-user-select: none; --hm-panel-w: 30em; }
+#hatta-map-widget.hm-kiosk.hm-hide-cursor, #hatta-map-widget.hm-kiosk.hm-hide-cursor * { cursor: none !important; }   /* added by map.js after the mouse has been still for a few seconds */
+#hatta-map-widget *, #hatta-map-widget *::before, #hatta-map-widget *::after { box-sizing: border-box; }
+#hatta-map-widget button { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; }
+#hatta-map-widget button:focus-visible, #hatta-map-widget input:focus-visible { outline: 3px solid var(--hm-teal); outline-offset: 2px; }
+#hatta-map-widget img { display: block; max-width: 100%; }
+#hatta-map-widget [hidden] { display: none !important; }
+#hatta-map-widget .hm-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------------------------------------------------------------- header */
+#hatta-map-widget .hm-header {
+  position: relative; z-index: 30;
+  display: flex; align-items: center; gap: 1em;
+  height: var(--hm-header-h); padding: 0 1.1em;
+  background: var(--hm-paper);
+  border-bottom: 1px solid var(--hm-line);
+  box-shadow: 0 1px 0 rgba(255,255,255,.6), 0 .3em 1em rgba(50,30,10,.06);
+}
+#hatta-map-widget .hm-brand { display: flex; align-items: center; gap: .8em; min-width: 0; }
+#hatta-map-widget .hm-brand-tile { height: 3em; width: auto; border-radius: .5em; }
+#hatta-map-widget .hm-brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+#hatta-map-widget .hm-brand-title { font-weight: 700; font-size: 1.15em; letter-spacing: .01em; white-space: nowrap; }
+#hatta-map-widget .hm-brand-sub { font-size: .8em; color: var(--hm-ink-2); white-space: nowrap; }
+#hatta-map-widget .hm-header-mid { flex: 1; display: flex; justify-content: center; min-width: 0; }
+#hatta-map-widget .hm-search { position: relative; width: min(28em, 100%); }
+#hatta-map-widget .hm-search input {
+  width: 100%; height: 2.6em; padding: 0 2.6em 0 1em; border-radius: 2em;
+  border: 1px solid var(--hm-line); background: var(--hm-sand); font: inherit; color: var(--hm-ink);
+}
+#hatta-map-widget .hm-search input::placeholder { color: var(--hm-ink-2); }
+#hatta-map-widget .hm-search svg { position: absolute; inset-inline-end: .9em; top: 50%; width: 1.1em; height: 1.1em; transform: translateY(-50%); fill: none; stroke: var(--hm-ink-2); stroke-width: 2; }
+#hatta-map-widget .hm-header-end { display: flex; align-items: center; gap: .6em; }
+#hatta-map-widget .hm-home { flex: 0 0 auto; }                                   /* back to the first screen */
+#hatta-map-widget[dir="rtl"] .hm-home svg { transform: scaleX(-1); }             /* arrow points "back" in Arabic too */
+#hatta-map-widget .hm-header-logo {                                              /* Dubai Culture, top right (top left in RTL) */
+  height: 2.5em; width: auto; flex: 0 0 auto;
+  margin-inline-start: .5em; padding-inline-start: 1.1em; border-inline-start: 1px solid var(--hm-line);
+}
+
+#hatta-map-widget .hm-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5em;
+  height: 2.6em; padding: 0 1.1em; border-radius: 2em;
+  background: var(--hm-sand); color: var(--hm-ink); font-weight: 500; white-space: nowrap;
+  border: 1px solid var(--hm-line); transition: background .15s, transform .15s, box-shadow .15s;
+}
+#hatta-map-widget .hm-btn:hover { background: var(--hm-sand-2); }
+#hatta-map-widget .hm-btn:active { transform: scale(.97); }
+#hatta-map-widget .hm-btn svg { width: 1.15em; height: 1.15em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+#hatta-map-widget .hm-btn.hm-primary { background: var(--hm-accent); color: #fff; border-color: transparent; }
+#hatta-map-widget .hm-btn.hm-primary:hover { background: var(--hm-accent-2); }
+#hatta-map-widget .hm-btn.hm-ghost { background: transparent; }
+#hatta-map-widget .hm-btn.hm-icon { width: 2.6em; padding: 0; }
+
+#hatta-map-widget .hm-lang { display: inline-flex; border-radius: 2em; border: 1px solid var(--hm-line); overflow: hidden; background: var(--hm-sand); }
+#hatta-map-widget .hm-lang button { height: 2.6em; padding: 0 1em; font-weight: 500; color: var(--hm-ink-2); }
+#hatta-map-widget .hm-lang button[aria-pressed="true"] { background: var(--hm-ink); color: #fff; }
+#hatta-map-widget .hm-lang button + button { border-inline-start: 1px solid var(--hm-line); }
+
+/* ---------------------------------------------------------------- body */
+#hatta-map-widget .hm-body { position: relative; flex: 1; display: flex; min-height: 0; }
+#hatta-map-widget .hm-mapwrap { position: relative; flex: 1; min-width: 0; min-height: 0; }
+#hatta-map-widget .hm-viewport {
+  position: absolute; inset: 0; overflow: hidden; touch-action: none; cursor: grab;
+  background: #EADFCB radial-gradient(ellipse at 50% 40%, #F3E9DA 0%, #E3D5BE 70%, #D8C7AC 100%);
+}
+#hatta-map-widget .hm-viewport.hm-dragging { cursor: grabbing; }
+#hatta-map-widget .hm-stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
+#hatta-map-widget .hm-base { position: absolute; left: 0; top: 0; width: 100%; height: 100%; user-select: none; -webkit-user-drag: none; pointer-events: none; border-radius: 12px; box-shadow: 0 0 0 2px rgba(255,255,255,.5), 0 30px 80px rgba(60,35,10,.25); }
+#hatta-map-widget .hm-markers { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+
+/* markers ----------------------------------------------------------------- */
+/* The marker box is the pin + its tail; the tail tip sits exactly on the place. The label hangs below the
+   pin as an absolutely positioned element, so hiding it (collision handling in map.js) never moves the pin. */
+#hatta-map-widget .hm-marker {
+  --c: var(--hm-accent);
+  --d: 2.35em;                                   /* pin diameter */
+  position: absolute; left: 0; top: 0;
+  width: var(--d); height: calc(var(--d) + .5em);
+  transform: translate(-50%, -100%) scale(var(--inv, 1));
+  transform-origin: 50% 100%;
+  pointer-events: auto;
+  transition: opacity .22s;
+  z-index: 1;
+}
+#hatta-map-widget .hm-marker[data-tier="1"] { z-index: 3; }
+#hatta-map-widget .hm-marker[data-tier="2"] { z-index: 2; }
+#hatta-map-widget .hm-marker[data-tier="3"] { --d: 1.85em; }
+#hatta-map-widget .hm-marker.hm-hidden, #hatta-map-widget .hm-marker.hm-collide { opacity: 0; pointer-events: none; }
+#hatta-map-widget .hm-pin {
+  position: absolute; left: 0; top: 0; width: var(--d); height: var(--d); border-radius: 50%;
+  background: var(--c); color: #fff;
+  display: grid; place-items: center;
+  box-shadow: 0 0 0 .16em #fff, 0 .25em .6em rgba(40,20,5,.35);
+  transition: transform .18s var(--hm-ease);
+}
+#hatta-map-widget .hm-pin::after {
+  content: ""; position: absolute; left: 50%; bottom: -.5em; width: .85em; height: .85em;
+  background: #fff; transform: translateX(-50%) rotate(45deg); border-radius: .1em; z-index: -1;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+#hatta-map-widget .hm-pin svg { width: 56%; height: 56%; fill: currentColor; }
+#hatta-map-widget .hm-marker[data-tier="3"] .hm-pin::after { width: .65em; height: .65em; bottom: -.38em; }
+#hatta-map-widget .hm-marker.hm-featured .hm-pin { box-shadow: 0 0 0 .16em #fff, 0 0 0 .34em var(--hm-gold), 0 .25em .6em rgba(40,20,5,.35); }
+#hatta-map-widget .hm-label {
+  position: absolute; top: calc(100% + .35em); left: 50%; transform: translateX(-50%);
+  width: max-content; max-width: 10.5em; padding: .22em .55em; border-radius: .55em;
+  background: rgba(255,253,249,.94); color: var(--hm-ink);
+  font-size: .76em; font-weight: 500; line-height: 1.2; text-align: center;
+  box-shadow: 0 .15em .45em rgba(40,20,5,.2);
+  transition: opacity .2s;
+}
+#hatta-map-widget .hm-marker.hm-lab-top .hm-label { top: auto; bottom: calc(100% + .35em); }
+#hatta-map-widget .hm-marker.hm-lab-right .hm-label { top: calc(var(--d) / 2); left: calc(100% + .35em); transform: translateY(-50%); text-align: start; }
+#hatta-map-widget .hm-marker.hm-lab-left .hm-label { top: calc(var(--d) / 2); left: auto; right: calc(100% + .35em); transform: translateY(-50%); text-align: end; }
+#hatta-map-widget .hm-marker.hm-nolabel .hm-label,
+#hatta-map-widget .hm-marker.hm-nolabel-c .hm-label { display: none; }
+#hatta-map-widget .hm-marker:hover { z-index: 9; }
+#hatta-map-widget .hm-marker:hover .hm-label, #hatta-map-widget .hm-marker:focus-visible .hm-label { display: block; }
+#hatta-map-widget .hm-marker:hover .hm-pin, #hatta-map-widget .hm-marker:focus-visible .hm-pin { transform: scale(1.12); }
+#hatta-map-widget .hm-marker.hm-active { z-index: 10; }
+#hatta-map-widget .hm-marker.hm-active .hm-pin { transform: scale(1.3); box-shadow: 0 0 0 .16em #fff, 0 0 0 .42em var(--c), 0 .5em 1em rgba(40,20,5,.4); }
+#hatta-map-widget .hm-marker.hm-active .hm-label { display: block; top: calc(100% + .9em); bottom: auto; left: 50%; right: auto; transform: translateX(-50%); text-align: center; background: var(--hm-ink); color: #fff; font-weight: 700; }
+#hatta-map-widget .hm-marker.hm-dim { opacity: .28; }
+@keyframes hm-pulse { 0% { box-shadow: 0 0 0 0 rgba(181,85,43,.55); } 100% { box-shadow: 0 0 0 1.6em rgba(181,85,43,0); } }
+#hatta-map-widget .hm-marker.hm-active .hm-pin::before { content: ""; position: absolute; inset: 0; border-radius: 50%; animation: hm-pulse 1.4s ease-out infinite; }
+
+/* chips ------------------------------------------------------------------ */
+#hatta-map-widget .hm-chips {
+  position: absolute; z-index: 20; top: 1em; inset-inline-start: 1em; inset-inline-end: 6.5em;
+  display: flex; gap: .5em; overflow-x: auto; padding: .25em; scrollbar-width: none; -ms-overflow-style: none;
+  mask-image: linear-gradient(90deg, #000 92%, transparent); -webkit-mask-image: linear-gradient(90deg, #000 92%, transparent);
+}
+#hatta-map-widget .hm-chips::-webkit-scrollbar { display: none; }
+#hatta-map-widget .hm-chip {
+  --c: var(--hm-ink);
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: .45em;
+  height: 2.5em; padding: 0 1em 0 .7em; border-radius: 2em;
+  background: rgba(255,253,249,.95); color: var(--hm-ink); font-weight: 500; white-space: nowrap;
+  box-shadow: var(--hm-shadow-sm); border: 2px solid transparent; transition: background .15s, transform .15s;
+}
+#hatta-map-widget .hm-chip .hm-dot { width: .8em; height: .8em; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 2px #fff; }
+#hatta-map-widget .hm-chip[aria-pressed="true"] { background: var(--c); color: #fff; }
+#hatta-map-widget .hm-chip[aria-pressed="true"] .hm-dot { background: #fff; box-shadow: none; }
+#hatta-map-widget .hm-chip:active { transform: scale(.96); }
+
+/* zoom controls ------------------------------------------------------------ */
+#hatta-map-widget .hm-zoom {
+  position: absolute; z-index: 20; inset-inline-end: 1em; bottom: 1em; display: flex; flex-direction: column; gap: .5em;
+}
+#hatta-map-widget .hm-zoom button {
+  width: 2.8em; height: 2.8em; border-radius: 50%; background: var(--hm-paper); color: var(--hm-ink);
+  display: grid; place-items: center; box-shadow: var(--hm-shadow-sm); border: 1px solid var(--hm-line);
+}
+#hatta-map-widget .hm-zoom button:hover { background: var(--hm-sand); }
+#hatta-map-widget .hm-zoom button svg { width: 1.3em; height: 1.3em; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+#hatta-map-widget .hm-hint {
+  position: absolute; z-index: 20; inset-inline-start: 1em; bottom: 1em; padding: .4em .9em; border-radius: 2em;
+  background: rgba(46,33,25,.75); color: #fff; font-size: .85em; pointer-events: none; transition: opacity .4s;
+}
+#hatta-map-widget .hm-hint.hm-fade { opacity: 0; }
+
+/* ---------------------------------------------------------------- panel */
+#hatta-map-widget .hm-panel {
+  position: relative; z-index: 25; flex: 0 0 var(--hm-panel-w); width: var(--hm-panel-w); max-width: 100%;
+  background: var(--hm-paper); border-inline-start: 1px solid var(--hm-line);
+  box-shadow: -0.5em 0 2em rgba(50,30,10,.12);
+  display: flex; flex-direction: column; min-height: 0;
+  transition: flex-basis .35s var(--hm-ease), width .35s var(--hm-ease), transform .35s var(--hm-ease);
+}
+#hatta-map-widget[dir="rtl"] .hm-panel { box-shadow: 0.5em 0 2em rgba(50,30,10,.12); }
+#hatta-map-widget .hm-panel[hidden] { display: none !important; }
+#hatta-map-widget .hm-panel-head { display: flex; align-items: center; justify-content: space-between; gap: .5em; padding: .9em 1.1em .6em; }
+#hatta-map-widget .hm-panel-title { font-weight: 700; font-size: 1.1em; }
+#hatta-map-widget .hm-close { width: 2.4em; height: 2.4em; border-radius: 50%; background: var(--hm-sand); display: grid; place-items: center; }
+#hatta-map-widget .hm-close svg { width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+#hatta-map-widget .hm-panel-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 0 1.1em 1.4em; }
+#hatta-map-widget .hm-panel-body::-webkit-scrollbar { width: .5em; }
+#hatta-map-widget .hm-panel-body::-webkit-scrollbar-thumb { background: var(--hm-sand-2); border-radius: 1em; }
+
+/* POI detail */
+#hatta-map-widget .hm-hero { position: relative; border-radius: var(--hm-radius); overflow: hidden; aspect-ratio: 16 / 9; background: var(--hm-sand-2); }
+#hatta-map-widget .hm-hero img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.04); }
+#hatta-map-widget .hm-hero.hm-hero-icon { display: grid; place-items: center; background: var(--c, var(--hm-accent)); color: #fff; aspect-ratio: 16 / 7; }
+#hatta-map-widget .hm-hero.hm-hero-icon svg { width: 3.4em; height: 3.4em; fill: currentColor; opacity: .95; }
+#hatta-map-widget .hm-badges { display: flex; flex-wrap: wrap; gap: .4em; margin: .9em 0 .5em; }
+#hatta-map-widget .hm-badge { display: inline-flex; align-items: center; gap: .4em; padding: .2em .7em; border-radius: 2em; font-size: .78em; font-weight: 500; background: var(--hm-sand); color: var(--hm-ink-2); }
+#hatta-map-widget .hm-badge .hm-dot { width: .7em; height: .7em; border-radius: 50%; background: var(--c, var(--hm-ink)); }
+#hatta-map-widget .hm-badge.hm-badge-featured { background: #FBF0D6; color: #8A5A00; }
+#hatta-map-widget .hm-poi-name { font-size: 1.45em; font-weight: 700; line-height: 1.15; margin: .1em 0 .05em; }
+#hatta-map-widget .hm-poi-name-alt { color: var(--hm-ink-2); font-size: 1em; margin-bottom: .6em; }
+#hatta-map-widget .hm-rule { width: 3em; height: .22em; background: var(--hm-accent); border-radius: 1em; margin: .3em 0 .8em; }
+#hatta-map-widget .hm-desc { font-size: 1em; line-height: 1.55; color: var(--hm-ink); }
+#hatta-map-widget .hm-note { margin-top: .8em; font-size: .78em; color: var(--hm-ink-2); }
+#hatta-map-widget .hm-actions { display: flex; flex-wrap: wrap; gap: .6em; margin-top: 1.1em; }
+#hatta-map-widget .hm-qr { display: flex; align-items: center; gap: 1em; margin-top: 1.1em; padding: .9em; border-radius: var(--hm-radius); background: var(--hm-sand); }
+#hatta-map-widget .hm-qr img { width: 7em; height: 7em; border-radius: .6em; background: #fff; padding: .3em; }
+#hatta-map-widget .hm-qr-text { font-size: .9em; line-height: 1.35; }
+#hatta-map-widget .hm-qr-text strong { display: block; font-size: 1.05em; margin-bottom: .2em; }
+#hatta-map-widget .hm-navsheet { display: grid; gap: .5em; margin-top: .8em; }
+#hatta-map-widget .hm-navsheet a {
+  display: flex; align-items: center; justify-content: space-between; gap: .6em; padding: .8em 1em; border-radius: .9em;
+  background: var(--hm-sand); color: var(--hm-ink); text-decoration: none; font-weight: 500;
+}
+#hatta-map-widget .hm-navsheet a:hover { background: var(--hm-sand-2); }
+#hatta-map-widget .hm-navsheet a svg { width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* directory */
+#hatta-map-widget .hm-dir-tabs { display: flex; gap: .4em; flex-wrap: wrap; margin: 0 0 .9em; }
+#hatta-map-widget .hm-dir-tab { padding: .35em .8em; border-radius: 2em; background: var(--hm-sand); font-size: .85em; font-weight: 500; color: var(--hm-ink-2); }
+#hatta-map-widget .hm-dir-tab[aria-pressed="true"] { background: var(--hm-ink); color: #fff; }
+#hatta-map-widget .hm-section { margin: 1em 0 .5em; font-size: .78em; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--hm-ink-2); }
+#hatta-map-widget .hm-cards { display: grid; grid-template-columns: 1fr 1fr; gap: .7em; }
+#hatta-map-widget .hm-card { position: relative; border-radius: .9em; overflow: hidden; aspect-ratio: 4 / 3; background: var(--hm-sand-2); text-align: start; color: #fff; }
+#hatta-map-widget .hm-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.04); transition: transform .3s; }
+#hatta-map-widget .hm-card:hover img { transform: scale(1.1); }
+#hatta-map-widget .hm-card span { position: absolute; inset: auto 0 0 0; padding: 1.6em .7em .6em; font-weight: 700; font-size: .9em; line-height: 1.15; background: linear-gradient(transparent, rgba(20,10,5,.85)); }
+#hatta-map-widget .hm-rows { display: flex; flex-direction: column; }
+#hatta-map-widget .hm-row {
+  display: flex; align-items: center; gap: .8em; padding: .6em .3em; border-bottom: 1px solid var(--hm-line); text-align: start; width: 100%;
+}
+#hatta-map-widget .hm-row:hover { background: var(--hm-sand); }
+#hatta-map-widget .hm-row .hm-row-pin { flex: 0 0 auto; width: 2.2em; height: 2.2em; border-radius: 50%; background: var(--c); color: #fff; display: grid; place-items: center; }
+#hatta-map-widget .hm-row .hm-row-pin svg { width: 1.2em; height: 1.2em; fill: currentColor; }
+#hatta-map-widget .hm-row-text { flex: 1; min-width: 0; }
+#hatta-map-widget .hm-row-name { font-weight: 500; }
+#hatta-map-widget .hm-row-sub { font-size: .8em; color: var(--hm-ink-2); }
+#hatta-map-widget .hm-row svg.hm-chev { width: 1em; height: 1em; fill: none; stroke: var(--hm-ink-2); stroke-width: 2; }
+#hatta-map-widget .hm-empty { padding: 2em 0; text-align: center; color: var(--hm-ink-2); }
+
+/* about */
+#hatta-map-widget .hm-about p { line-height: 1.55; }
+#hatta-map-widget .hm-kv { display: grid; gap: .5em; margin-top: .6em; }
+#hatta-map-widget .hm-kv div { padding: .7em .9em; border-radius: .8em; background: var(--hm-sand); }
+#hatta-map-widget .hm-kv b { display: inline-block; min-width: 3em; color: var(--hm-accent); }
+
+/* ---------------------------------------------------------------- footer */
+#hatta-map-widget .hm-footer {
+  position: relative; z-index: 30; display: flex; align-items: center; justify-content: space-between; gap: 1em;
+  height: var(--hm-footer-h); padding: 0 1.1em; background: var(--hm-paper); border-top: 1px solid var(--hm-line);
+}
+#hatta-map-widget .hm-footer-brand { display: flex; align-items: center; gap: .8em; color: var(--hm-ink-2); font-size: .8em; }
+#hatta-map-widget .hm-footer-actions { display: flex; gap: .6em; }
+
+/* ---------------------------------------------------------------- landing / attract */
+#hatta-map-widget .hm-landing {
+  position: absolute; inset: 0; z-index: 60; overflow: hidden; color: #fff; display: flex; flex-direction: column;
+  background: #2b1a10;
+}
+#hatta-map-widget .hm-landing-bg { position: absolute; inset: -6%; width: 112%; max-width: none; height: 112%; object-fit: cover; opacity: .55; filter: saturate(.8); }
+#hatta-map-widget .hm-landing.hm-animate .hm-landing-bg { animation: hm-kenburns 40s ease-in-out infinite alternate; }
+@keyframes hm-kenburns { 0% { transform: scale(1) translate(0, 0); } 100% { transform: scale(1.18) translate(-3%, 2%); } }
+#hatta-map-widget .hm-landing::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,10,5,.55) 0%, rgba(20,10,5,.35) 30%, rgba(20,10,5,.92) 100%), linear-gradient(90deg, rgba(20,10,5,.85) 0%, rgba(20,10,5,.6) 40%, rgba(20,10,5,.1) 75%); }
+#hatta-map-widget[dir="rtl"] .hm-landing::before { background: linear-gradient(180deg, rgba(20,10,5,.55) 0%, rgba(20,10,5,.35) 30%, rgba(20,10,5,.92) 100%), linear-gradient(270deg, rgba(20,10,5,.85) 0%, rgba(20,10,5,.6) 40%, rgba(20,10,5,.1) 75%); }
+#hatta-map-widget .hm-landing-top { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 1.4em 1.8em; }
+#hatta-map-widget .hm-landing-top img { height: 3.2em; width: auto; filter: drop-shadow(0 .2em .5em rgba(0,0,0,.4)); }
+#hatta-map-widget .hm-landing-main { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 1.8em 1.6em; gap: 1.2em; }
+#hatta-map-widget .hm-landing-kicker { font-size: .95em; letter-spacing: .25em; text-transform: uppercase; opacity: .85; font-weight: 500; }
+#hatta-map-widget .hm-landing-title { font-size: 3.6em; font-weight: 700; line-height: 1; margin: .1em 0 .2em; text-shadow: 0 .1em .6em rgba(0,0,0,.7), 0 0 2em rgba(0,0,0,.5); }
+#hatta-map-widget .hm-landing-intro { max-width: 34em; font-size: 1.05em; line-height: 1.5; opacity: .95; text-shadow: 0 .1em .5em rgba(0,0,0,.9), 0 0 1.5em rgba(0,0,0,.6); }
+#hatta-map-widget .hm-landing-kicker { text-shadow: 0 .1em .4em rgba(0,0,0,.6); }
+#hatta-map-widget .hm-landing-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .8em; margin-top: .4em; }
+#hatta-map-widget .hm-landing .hm-btn { height: 3.2em; padding: 0 1.6em; font-size: 1.05em; }
+#hatta-map-widget .hm-landing .hm-btn.hm-primary { box-shadow: 0 .5em 1.5em rgba(181,85,43,.45); }
+#hatta-map-widget .hm-landing .hm-lang { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.3); backdrop-filter: blur(6px); }
+#hatta-map-widget .hm-landing .hm-lang button { color: #fff; height: 3.2em; font-size: 1.05em; }
+#hatta-map-widget .hm-landing .hm-lang button[aria-pressed="true"] { background: #fff; color: var(--hm-ink); }
+#hatta-map-widget .hm-landing-touch { display: none; align-items: center; gap: .8em; font-size: 1.1em; font-weight: 500; }
+#hatta-map-widget .hm-landing.hm-attract .hm-landing-touch { display: inline-flex; }
+#hatta-map-widget .hm-landing-touch .hm-ring { width: 1.6em; height: 1.6em; border-radius: 50%; border: .18em solid #fff; position: relative; }
+#hatta-map-widget .hm-landing-touch .hm-ring::after { content: ""; position: absolute; inset: -.18em; border-radius: 50%; border: .18em solid #fff; animation: hm-ring 1.8s ease-out infinite; }
+@keyframes hm-ring { 0% { transform: scale(1); opacity: .9; } 100% { transform: scale(2.2); opacity: 0; } }
+#hatta-map-widget .hm-landing-cards { position: relative; display: flex; gap: .8em; overflow: hidden; padding-bottom: .2em; }
+#hatta-map-widget .hm-landing-card { flex: 0 0 12.5em; height: 8.6em; border-radius: .9em; overflow: hidden; position: relative; box-shadow: 0 .4em 1.2em rgba(0,0,0,.4); transition: transform .5s var(--hm-ease), opacity .5s; }
+#hatta-map-widget .hm-landing-card img { width: 100%; height: 100%; object-fit: cover; }
+#hatta-map-widget .hm-landing-card span { position: absolute; inset: auto 0 0 0; padding: 1.4em .7em .55em; font-weight: 700; font-size: .85em; line-height: 1.15; background: linear-gradient(transparent, rgba(0,0,0,.8)); }
+#hatta-map-widget .hm-landing-card.hm-lead { transform: scale(1.06); box-shadow: 0 0 0 .18em var(--hm-gold), 0 .5em 1.4em rgba(0,0,0,.5); }
+#hatta-map-widget .hm-landing-foot { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 1em; padding: 0 1.8em 1.2em; font-size: .8em; opacity: .8; }
+#hatta-map-widget .hm-landing-foot img { height: 2.4em; width: auto; }
+#hatta-map-widget .hm-landing.hm-out { animation: hm-fadeout .45s forwards; pointer-events: none; }
+@keyframes hm-fadeout { to { opacity: 0; } }
+
+/* ---------------------------------------------------------------- portrait layout */
+#hatta-map-widget.hm-portrait .hm-body { flex-direction: column; }
+#hatta-map-widget.hm-portrait .hm-mapwrap { flex: 1 1 auto; }
+#hatta-map-widget.hm-portrait .hm-panel {
+  flex: 0 0 auto; width: 100%; height: 52%; max-height: 62%;
+  border-inline-start: 0; border-top: 1px solid var(--hm-line);
+  border-radius: var(--hm-radius) var(--hm-radius) 0 0; box-shadow: 0 -0.5em 2em rgba(50,30,10,.14);
+  margin-top: calc(-1 * var(--hm-radius));
+}
+#hatta-map-widget.hm-portrait .hm-panel::before { content: ""; display: block; width: 3em; height: .3em; border-radius: 1em; background: var(--hm-sand-2); margin: .5em auto 0; }
+#hatta-map-widget.hm-portrait .hm-panel-head { padding-top: .4em; }
+#hatta-map-widget.hm-portrait .hm-panel.hm-tall { height: 70%; max-height: 74%; }
+#hatta-map-widget.hm-portrait .hm-poi { display: grid; grid-template-columns: minmax(14em, 38%) 1fr; gap: 1.3em; align-items: start; }
+#hatta-map-widget.hm-portrait .hm-poi .hm-hero { aspect-ratio: 4 / 3; }
+#hatta-map-widget.hm-portrait .hm-poi .hm-badges { margin-top: 0; }
+#hatta-map-widget.hm-portrait .hm-qr { margin-top: 1em; }
+#hatta-map-widget.hm-portrait .hm-cards { grid-template-columns: 1fr 1fr 1fr; }
+#hatta-map-widget.hm-portrait .hm-brand-sub { display: none; }
+#hatta-map-widget.hm-portrait .hm-header-mid { display: none; }
+#hatta-map-widget.hm-portrait .hm-landing-title { font-size: 3em; }
+#hatta-map-widget.hm-portrait .hm-landing-card { flex-basis: 10.5em; height: 7.4em; }
+
+/* narrow screens (mobile web) */
+@media (max-width: 720px) {
+  #hatta-map-widget { font-size: 15px; }
+  #hatta-map-widget .hm-header { padding: 0 .8em; gap: .6em; }
+  #hatta-map-widget .hm-header-mid { display: none; }
+  #hatta-map-widget .hm-brand-sub { display: none; }
+  #hatta-map-widget .hm-header-logo { height: 2.1em; margin-inline-start: .2em; padding-inline-start: .7em; }
+  #hatta-map-widget .hm-landing-title { font-size: 2.6em; }
+  #hatta-map-widget .hm-landing-intro { font-size: .95em; }
+  #hatta-map-widget .hm-landing-cards { display: none; }
+  #hatta-map-widget .hm-chips { inset-inline-end: 1em; }
+  #hatta-map-widget .hm-brand { flex: 1; min-width: 0; }
+  #hatta-map-widget .hm-brand-title { overflow: hidden; text-overflow: ellipsis; font-size: 1.05em; }
+  #hatta-map-widget .hm-poi { display: block; }
+  #hatta-map-widget.hm-portrait .hm-poi .hm-hero { aspect-ratio: 16 / 9; }
+}
+@media (max-width: 480px) {
+  #hatta-map-widget .hm-header .hm-btn span { display: none; }
+  #hatta-map-widget .hm-header .hm-btn { width: 2.6em; padding: 0; }
+  #hatta-map-widget .hm-header .hm-brand-text { display: none; }                 /* the Hatta tile carries the name */
+  #hatta-map-widget .hm-header .hm-brand { gap: 0; }
+  #hatta-map-widget .hm-lang button { padding: 0 .7em; }
+  /* header language switch shows only the other language (one button) so the row fits a phone */
+  #hatta-map-widget .hm-header .hm-lang button[aria-pressed="true"] { display: none; }
+  #hatta-map-widget .hm-header .hm-lang button { border-inline-start: 0; background: var(--hm-sand); color: var(--hm-ink); }
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  #hatta-map-widget * { animation: none !important; transition: none !important; }
+}
