@@ -45,7 +45,7 @@
       hint: 'Drag to move · pinch or scroll to zoom',
       noResults: 'No places match your search.',
       directionsTitle: 'Directions from Dubai', busTitle: 'Bus routes',
-      sourceNote: 'Content from the Explore Hatta 2026 printed map (Department of Economy and Tourism). Prototype only.',
+      sourceNote: 'Map artwork and place descriptions: Department of Economy and Tourism, Dubai. Prototype only.',
       featuredBadge: 'Featured', langName: 'EN', otherLang: 'العربية',
       generic: 'Marked on the Explore Hatta map.',
       moreInfo: 'Opening hours, contact and prices: to be confirmed.'
@@ -63,7 +63,7 @@
       hint: 'اسحب للتحريك · قرّب بإصبعين أو بعجلة الفأرة',
       noResults: 'لا توجد أماكن مطابقة لبحثك.',
       directionsTitle: 'الاتجاهات من دبي', busTitle: 'خطوط الحافلات',
-      sourceNote: 'المحتوى من خريطة استكشف حتا 2026 المطبوعة (دائرة الاقتصاد والسياحة). نموذج أولي.',
+      sourceNote: 'الرسم التوضيحي للخريطة وأوصاف الأماكن: دائرة الاقتصاد والسياحة، دبي. نموذج أولي.',
       featuredBadge: 'مميّز', langName: 'العربية', otherLang: 'EN',
       generic: 'مُدرج على خريطة استكشف حتا.',
       moreInfo: 'ساعات العمل والتواصل والأسعار: قيد التأكيد.'
