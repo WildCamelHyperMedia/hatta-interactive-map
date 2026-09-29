@@ -474,7 +474,7 @@
     function resetView(animated) {
       computeFit(); var v = vpSize(), p = fitPad(); var ns = fitScale;
       var nx = p.side + ((v.w - 2 * p.side) - W * ns) / 2, ny = p.top + ((v.h - p.top - p.bottom) - H * ns) / 2;
-      if (animated) animateView(nx, ny, ns, 450); else { setView(nx, ny, ns); }
+      if (animated) animateView(nx, ny, ns, typeof animated === 'number' ? animated : 450); else { setView(nx, ny, ns); }
     }
     function animateTo(nx, ny, ns, fx, fy, dur) { // zoom about focal point (fx,fy) to scale ns
       ns = clampNum(ns, fitScale, maxScale); var r = ns / s;
@@ -818,7 +818,7 @@
     function userActive() { if (kiosk && !landingEl) armIdle(); }
     ['pointerdown', 'keydown', 'wheel'].forEach(function (ev) { root.addEventListener(ev, userActive, { passive: true }); });
     // idle reset (kiosk): everything back to defaults, including the language
-    function goHome() { closePanel(); setFilter(null); searchQ = ''; if (searchInput) searchInput.value = ''; dirTab = 'featured'; if (lang !== defaultLang) setLang(defaultLang); resetView(false); }
+    function goHome(animated) { closePanel(); setFilter(null); searchQ = ''; if (searchInput) searchInput.value = ''; dirTab = 'featured'; if (lang !== defaultLang) setLang(defaultLang); resetView(animated || false); }
     // Home button: back to the first screen, map reset, language kept
     function goStart() {
       closePanel(); setFilter(null); searchQ = ''; if (searchInput) searchInput.value = ''; dirTab = 'featured'; resetView(false);
@@ -828,7 +828,7 @@
     /* ---- public API ---- */
     var api = {
       setLang: setLang, select: function (id) { selectPOI(id, true); }, openDirectory: openDirectory, openAbout: openAbout,
-      close: closePanel, reset: function () { goHome(); }, home: goStart, showLanding: function () { showLanding(kiosk); }, filter: setFilter,
+      close: closePanel, reset: function (animated) { goHome(animated); }, home: goStart, showLanding: function () { showLanding(kiosk); }, filter: setFilter,
       getState: function () { return { lang: lang, scale: s, activeId: activeId, filter: filter, panel: panelMode }; }
     };
     root._hattaMap = api;
