@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-  <title>Explore Hatta — Interactive Map (prototype)</title>
+  <title>Explore Hatta — Kiosk (portrait)</title>
   <meta name="description" content="Interactive map of Hatta for web and kiosk — Wild Camel HyperMedia prototype for Dubai Culture.">
   <meta name="robots" content="noindex, nofollow">
-  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="manifest" href="manifest-kiosk-portrait.webmanifest">
   <meta name="theme-color" content="#FFFDF9">
   <meta name="application-name" content="Explore Hatta">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Explore Hatta">
+  <meta name="apple-mobile-web-app-title" content="Hatta Kiosk">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
@@ -25,6 +25,7 @@
   </style>
 </head>
 <body>
+  <!-- Kiosk entry page: portrait by default (add to a tablet home screen for a demo); the ?switches still work -->
   <div id="hatta-map-widget" data-lang="en" dir="ltr"></div>
 
   <!-- data/pois.js makes the prototype work from file:// (kiosk); map.js falls back to fetch(dataUrl) without it -->
@@ -39,8 +40,8 @@
       });
       window.HattaMap.init({
         container: '#hatta-map-widget',
-        mode: q.mode === 'kiosk' ? 'kiosk' : 'web',
-        orientation: q.orientation || 'auto',
+        mode: q.mode === 'web' ? 'web' : 'kiosk',
+        orientation: q.orientation || 'portrait',
         lang: q.lang || 'en',
         showLangToggle: true,
         showLanding: q.landing !== '0',

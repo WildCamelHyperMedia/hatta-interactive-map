@@ -1,0 +1,40 @@
+{
+  "name": "Explore Hatta — Kiosk (landscape)",
+  "short_name": "Hatta Kiosk",
+  "description": "Interactive map of Hatta for web and touch kiosks — Wild Camel HyperMedia prototype for Dubai Culture.",
+  "id": "./kiosk.html",
+  "start_url": "./kiosk.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#F4EADB",
+  "theme_color": "#FFFDF9",
+  "lang": "en",
+  "dir": "auto",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
